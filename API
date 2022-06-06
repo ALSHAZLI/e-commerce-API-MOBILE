@@ -1,0 +1,199 @@
+
+-------------------------------------------------- LOGIN --------------------------------------------
+
+	1- Login 
+
+		api_name: sign_in
+		method: POST
+		
+		request body: {
+			  phone: string (10) ex : 0123214499
+			  password: string (man 6) 
+			}
+			
+		reponse body:{
+			  full_name: string
+			  phone:string
+			  user_id:string
+			  token:string
+			}
+			
+		
+
+-------------------------------------------------- SING UP --------------------------------------------
+
+
+	2- Sing Up
+	
+		api_name: sign_up
+		method: POST
+		
+		request body: {
+			  phone: string (10) ex : 0123214499
+			  full_name:string 
+			  fcm_token:string
+			  password: string
+			}
+			
+		reponse body:{
+			  phone: string (10) ex : 0123214499
+			  token:string
+			  user_id:string
+			  full_name: string
+			}
+			
+			
+			
+			
+-------------------------------------------------- CATEGORIES --------------------------------------------
+
+
+
+	3- Categories:
+
+		api_name: get_categories
+		method: POST
+		
+		request body: {
+			  token: string
+			}
+		reponse body:{
+		
+			  List<Categories>: [
+				  id:int,
+				  name:string,
+				  image:string,
+				]
+			}
+
+
+
+-------------------------------------------------- PRODUCTS --------------------------------------------
+
+
+	4- products :
+	
+		api_name: get_products
+		method: POST
+		
+		request body: {
+			  token: string
+			}
+			
+		reponse body:{
+		
+			  List<Product>: [
+					id:int
+					name: string
+				 	category_id: int
+					description: string
+					image: string
+					price: double
+				]
+				
+			}
+
+
+-------------------------------------------------- ORDERS --------------------------------------------
+
+
+	5- Orders: 
+	
+		api_name: add_order
+		
+		method: POST
+		request body: {
+		
+			  token: string
+			  user_id: int
+			  
+			  List<Product>: [
+					id:int
+					name: string
+					image: string
+					price: double
+					quantity: int
+				]
+				
+			  total_price: double
+			  location:string
+			}
+			
+		reponse body:{
+		
+			  message: "OK"
+			  
+			}
+
+
+-------------------------------------------------- NOTIFICATIONS --------------------------------------------
+
+
+	6- Notification: 
+	
+		api_name: get_notifications
+		method: POST
+		
+		request body: {
+			  token: string
+			  user_id: int
+			}
+			
+		reponse body:{
+		
+			  List<Notification>: [
+					id: int
+					title: string
+					content: string
+					image: string
+					date: string
+
+				]
+			}
+
+
+-------------------------------------------------- LOG OUT --------------------------------------------
+
+
+	6- sing_out: 
+		api_name: sing_out
+		method: POST
+		
+		request body: {
+			  token: string
+			}
+			
+		reponse body:{
+		
+			  message:"Done"
+			  
+			}
+
+
+
+
+-------------------------------------------------- PROFILE --------------------------------------------
+
+
+7- Update Profile:
+	
+	api_name: update_profile
+	method: POST
+	
+	request body: {
+		  username: string
+		  phone:string (10) ex : 0123211144
+		  image: string
+		}
+		
+	reponse body:{
+	
+		  message:"Done"
+		  
+		}
+
+
+
+
+
+
