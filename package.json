@@ -9,10 +9,6 @@
     "watch": "nodemon server.js",
     "seed": "node seeds/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/micheqn3/e-commerce-back-end"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
