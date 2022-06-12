@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const { Order, User } = require('../../models');
+const adminChecker = require("../controllers/adminController")
 
-
-router.post('/', async (req, res) => { 
+router.post('/', adminChecker,async (req, res) => { 
      
     // request shulde loock like this 
   //   { 
@@ -65,7 +65,7 @@ router.get('/', async (req,res) =>{
 });
 
 
-router.get('/:id', async (req, res) => { // Finds a single Order by its ID and includes associated  User data
+router.get('/:id',async (req, res) => { // Finds a single Order by its ID and includes associated  User data
   try {
     const d = await Order.findOne({
       where: {
@@ -90,7 +90,7 @@ router.get('/:id', async (req, res) => { // Finds a single Order by its ID and i
 });
 
 
-router.put('/:id', (req, res) => { // Updates Order data
+router.put('/:id', adminChecker,(req, res) => { // Updates Order data
   Order.update(req.body, {
     where: {
       id: req.params.id,
@@ -105,7 +105,7 @@ router.put('/:id', (req, res) => { // Updates Order data
     });
 });
 
-router.delete('/:id', async (req, res) => { // delete one Order by its `id` value
+router.delete('/:id', adminChecker,async (req, res) => { // delete one Order by its `id` value
   try {
     const d = await Order.destroy({
       where: {

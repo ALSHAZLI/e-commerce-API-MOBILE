@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { Product, Category, } = require('../../models');
-
+const adminChecker = require("../controllers/adminController")
 // The `/api/products` endpoint
 
 router.get('/', async (req, res) => { // Finds all products and includes associated category and tag data
@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => { // Finds a single product by its ID and
   }
 });
 
-router.post('/', async(req, res) => {
+router.post('/',adminChecker, async(req, res) => {
   
   try {
     const p = await Product.create(req.body);
@@ -68,7 +68,7 @@ router.put('/:id', (req, res) => { // Updates product data
     });
 });
 
-router.delete('/:id', async (req, res) => { // delete one product by its `id` value
+router.delete('/:id', adminChecker,async (req, res) => { // delete one product by its `id` value
   try {
     const d = await Product.destroy({
       where: {
