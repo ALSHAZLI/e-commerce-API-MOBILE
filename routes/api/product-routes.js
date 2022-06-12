@@ -13,7 +13,7 @@ router.get('/', async (req, res) => { // Finds all products and includes associa
         },
       ]
     })
-    res.status(200).json(d[0].id);
+    res.status(200).json(d);
   } catch (error) {
     res.status(500).json(error);
   }

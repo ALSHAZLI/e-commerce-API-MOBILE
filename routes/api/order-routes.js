@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Order, Product, User } = require('../../models');
+const { Order, User } = require('../../models');
 
 
 router.post('/', async (req, res) => { 
@@ -42,10 +42,19 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req,res) =>{
     Order.findAll({
-    
+      include: [
+        {
+          model: User,
+          attributes: ['id']
+        },
+      ]
       })
     .then(data => {
-        res.send(data);
+      //  for (let i = 0; i < data.length; i++) { 
+      //   console.log(data[i].user_id);
+        
+      // }
+      res.send(data);
       })
       .catch(err => {
         res.status(500).send({
@@ -56,7 +65,7 @@ router.get('/', async (req,res) =>{
 });
 
 
-router.get('/:id', async (req, res) => { // Finds a single Order by its ID and includes associated category and tag data
+router.get('/:id', async (req, res) => { // Finds a single Order by its ID and includes associated  User data
   try {
     const d = await Order.findOne({
       where: {
@@ -65,7 +74,7 @@ router.get('/:id', async (req, res) => { // Finds a single Order by its ID and i
       include: [
         {
           model: User,
-          attributes: ['user_id']
+          attributes: ['id']
         },
 
       ]
@@ -80,4 +89,40 @@ router.get('/:id', async (req, res) => { // Finds a single Order by its ID and i
   }
 });
 
+
+router.put('/:id', (req, res) => { // Updates Order data
+  Order.update(req.body, {
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((product) => {
+      res.status(200).json(product);
+    
+    })  
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
+router.delete('/:id', async (req, res) => { // delete one Order by its `id` value
+  try {
+    const d = await Order.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+    if (!d) {
+      res.status(404).json({message: 'Could not find a Order with that ID!'});
+    } else {
+      res.status(200).json(d);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+  
+});
+
+
  module.exports = router;
+

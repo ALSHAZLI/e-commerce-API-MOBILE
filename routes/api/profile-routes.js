@@ -1,12 +1,68 @@
 const router = require('express').Router();
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
+var bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+app.use(bodyParser.json());
+const { sign, verify } = require("jsonwebtoken");
+
+const { createTokens, validateToken } = require("../../JWT");
 
 
+router.get('/', (req, res) => {
+  const accessToken = req.header("x-auth-token");
 
-router.get('/', async (req, res) => {
-    return res.send("profile sure : You Are Loged In");
+  if (!accessToken)
+  
+    return res.status(400).json({ error: "User not Authenticated!@@@@@" });
+
+  try {
+    const validToken = verify(accessToken, "jwtsecretplschange",async (err,decodedtoken)=>{
+      if(err){
+        console.log(err.message);
+        next();
+      }
+      console.log(decodedtoken.id)
+      let user  = await User.findOne({where: { id: decodedtoken.id} ,})
+     // res.locals.user = user;
+     
+      console.log(user.dataValues);
+      res.status(201).json({message: user.dataValues});
+      // req.user = validToken;
+    
+    });
+    
+
+    //next();
+    // if (validToken) {
+      
+    //   return next();
+    // }
+  } catch (err) {
+     res.status(400).json({ error: err });
+  }
 });
+
+// router.get('/', async  (req, res) => { // Finds one User by its ID value and 
+//   try {
+//    // user = req.user.id
+//   //  var userId = req.user.user_id;
+//    console.log(userId)
+//     const d = await User.findOne({where: { id: userId} ,
+      
+//     })
+//     console.log(d.dataValues);
+//     if (!d) {
+//       res.status(404).json({message: 'Could not find a user with that ID!'});
+//     } else {
+//       res.status(200).json({message: d});
+//     }
+//   } catch (error) {
+//     res.status(500).json(error);
+//     console.log(error)
+//   }
+// });
 
 router.put('/:id', async (req, res) => { // Updates a user by its `id` value
     try {

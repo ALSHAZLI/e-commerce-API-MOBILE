@@ -16,7 +16,7 @@ Order.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    user_id: { // References the Category model's ID. This product belongs to one category.
+    user_id: { // References the Uesr model's ID. This Order belongs to one User.
       type: DataTypes.INTEGER,
       references: {
         model: 'user', 

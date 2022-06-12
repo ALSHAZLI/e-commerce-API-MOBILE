@@ -36,6 +36,10 @@ User.init(
       validate: {
         notNull: true
       }
+    },
+    is_admin: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   },
   {
