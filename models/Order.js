@@ -24,8 +24,6 @@ Order.init(
       }
     },
    products: {
-  //   { 
-  //     "user_id": "4",
   //     "products":[{
   //          "id":4,
   //          "name":"iphone",
@@ -41,9 +39,7 @@ Order.init(
   //          "price": 42.0
   //        }
   //        ],
-  //     "total_price" : 93.0,
-  //     "location": "khartom city"
-  //  }
+  
       type: DataTypes.JSON,
         allowNull: false,
         validate: {

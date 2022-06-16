@@ -6,13 +6,28 @@ const adminChecker = require("../controllers/adminController")
 router.get('/', async (req, res) => { // Finds all Notification and includes associated category and tag data
   try {
     const d = await Notification.findAll({
-      include: [
-        {
-          model: User,
-        },
-      ]
+   
     })
     res.status(200).json(d);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+//   GET /api/notification/title1
+router.get('/title1', async (req, res) => { // Finds a single Notification by its title 
+  try {
+    const d = await Notification.findOne({
+      where: {
+        title: 'notdy1'
+      },
+      
+    })
+    if (!d) {
+      res.status(404).json({message: "Couldn't find that Notification ID!"});
+    } else {
+      res.status(200).json(d);
+    }
   } catch (error) {
     res.status(500).json(error);
   }
@@ -24,12 +39,7 @@ router.get('/:id', async (req, res) => { // Finds a single Notification by its I
       where: {
         id: req.params.id
       },
-      include: [
-        {
-          model: User,
-        },
-
-      ]
+      
     })
     if (!d) {
       res.status(404).json({message: "Couldn't find that Notification ID!"});

@@ -1,110 +1,134 @@
-const router = require('express').Router();
+const router = require("express").Router();
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
-var bodyParser = require('body-parser');
-const express = require('express');
+var bodyParser = require("body-parser");
+const express = require("express");
 const app = express();
 app.use(bodyParser.json());
 const { sign, verify } = require("jsonwebtoken");
+const { updateProfileSchma } = require("../helper/authSchema")
 
-const { createTokens, validateToken } = require("../../JWT");
 
-
-router.get('/', (req, res) => {
+//  http://localhost:3001/api/profile
+//Method : GET   hear we get user info  in his profile by his Id and Id stored in Token accessToken
+router.get("/", (req, res) => {
   const accessToken = req.header("x-auth-token");
 
   if (!accessToken)
-  
     return res.status(400).json({ error: "User not Authenticated!@@@@@" });
 
   try {
-    const validToken = verify(accessToken, "jwtsecretplschange",async (err,decodedtoken)=>{
-      if(err){
-        console.log(err.message);
-        next();
-      }
-      console.log(decodedtoken.id)
-      let user  = await User.findOne({where: { id: decodedtoken.id} ,})
-     // res.locals.user = user;
-     
-      console.log(user.dataValues);
-      res.status(201).json({message: user.dataValues});
-      // req.user = validToken;
-    
-    });
-    
+    const validToken = verify(
+      accessToken,
+      "jwtsecretplschange",
+      async (err, decodedtoken) => {
+        if (err) {
+          console.log(err.message);
+          next();
+        }
+        console.log(decodedtoken.id);
+        let user = await User.findOne({ where: { id: decodedtoken.id } });
+        // res.locals.user = user;
 
-    //next();
-    // if (validToken) {
-      
-    //   return next();
-    // }
+        console.log(user.dataValues);
+        res.status(201).json({ userInfo: user.dataValues });
+        // req.user = validToken;
+      }
+    );
   } catch (err) {
-     res.status(400).json({ error: err });
+    res.status(400).json({ error: err });
   }
 });
 
-// router.get('/', async  (req, res) => { // Finds one User by its ID value and 
-//   try {
-//    // user = req.user.id
-//   //  var userId = req.user.user_id;
-//    console.log(userId)
-//     const d = await User.findOne({where: { id: userId} ,
-      
-//     })
-//     console.log(d.dataValues);
-//     if (!d) {
-//       res.status(404).json({message: 'Could not find a user with that ID!'});
-//     } else {
-//       res.status(200).json({message: d});
-//     }
-//   } catch (error) {
-//     res.status(500).json(error);
-//     console.log(error)
-//   }
-// });
+//  http://localhost:3001/api/profile/user
+//Method : Patch  Update user info in db
 
-router.put('/:id', async (req, res) => { // Updates a user by its `id` value
-    try {
-        const { phone, fullname,password } = req.body;
-      
-        bcrypt.hash(password, 10).then((hash) => {
-            User.update({
-             fullname: fullname,
-             phone: phone,
-             password: hash,
-           }, {
-            where: {
-              id: req.params.id
+router.patch("/", async (req, res) => {
+  // Updates a user by its `id` value
+  const accessToken = req.header("x-auth-token");
+
+  if (!accessToken)
+    return res.status(400).json({ error: "User not Authenticated!@@@@@" });
+  try {
+    //const { password } = req.body;
+    const result = await updateProfileSchma.validateAsync(req.body)
+    const validToken = verify(
+      accessToken,
+      "jwtsecretplschange",
+      async (err, decodedtoken) => {
+        if (err) {
+          console.log(err.message);
+          next();
+        }
+        if (result.password) {
+          const hash = bcrypt.hashSync(req.body.password, 10);
+          password = hash;
+
+          //    bcrypt.hash(password, 10).then((hash) => {  password =  hash})
+          User.update(
+            {
+              fullname: result.fullname,
+              phone: result.phone,
+              password: hash,
+            },
+            {
+              where: {
+                id: decodedtoken.id,
+              },
             }
-          })
-             .then(() => {
-               return res.status(201).json("done");
-               //return res.redirect(201,"/login");
-               //   console.log(user);
-             })
-             .catch((err) => {
-               if (err) {
-                 return res.status(404).json({
-                   errors : err
-                 })
-                 
-               }
-             });
-         })
-          
-        
-    //   if (err) {
-    //     res.status(404).json({message: 'Could not find a user with that ID!'});
-    //     console.log(err)
-    // }
-
-    } catch (error) {
-      res.status(500).json(error);
-      console.log(error);
+          )
+            .then(() => {
+              return res.status(201).json("done");
+              //return res.redirect(201,"/login");
+              //   console.log(user);
+            })
+            .catch((err) => {
+              if (err) {
+                return res.status(404).json({
+                  errors: err,
+                });
+              }
+            });
+          //    })
+        } else {
+          User.update(
+            {
+              fullname: result.fullname,
+              phone: result.phone,
+            },
+            {
+              where: {
+                id: decodedtoken.id,
+              },
+            }
+          )
+            .then(() => {
+              return res.status(201).json("done");
+              //return res.redirect(201,"/login");
+              //   console.log(user);
+            })
+            .catch((err) => {
+              if (err) {
+                return res.status(404).json({
+                  errors: err,
+                });
+              }
+            });
+        }
+      }
+    );
+  } catch (err) {
+    if (err.isJoi === true) {
+      const joiErr = err.details[0].message;
+      console.log(joiErr)
+      return res.status(422).json({
+        joiErr
+      })
+     
     }
-  });
-  
+    res.status(500).json(err);
+    console.log(err);
+  }
+});
 
-
-  module.exports = router;
+module.exports = router;

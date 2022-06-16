@@ -18,6 +18,7 @@ User.init(
     fullname: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notNull: true
       }
@@ -25,14 +26,16 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notNull: true
       }
     }
     ,
     phone: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(10),
       allowNull: false,
+      unique: true,
       validate: {
         notNull: true
       }

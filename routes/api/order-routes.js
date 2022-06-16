@@ -2,7 +2,10 @@ const router = require('express').Router();
 const { Order, User } = require('../../models');
 const adminChecker = require("../controllers/adminController")
 
-router.post('/', adminChecker,async (req, res) => { 
+const { sign, verify } = require("jsonwebtoken");
+const { orderSchma } = require("../helper/authSchema")
+
+router.post('/',async (req, res) => { 
      
     // request shulde loock like this 
   //   { 
@@ -25,35 +28,54 @@ router.post('/', adminChecker,async (req, res) => {
   //     "total_price" : 93.0,
   //     "location": "khartom city"
   //  }
-	try {
 
-		const p = await Order.create(req.body);
-		res.status(200).json(p);
-	  } catch (error) {
-		res.status(500).json(error);
-	  }
+  const accessToken = req.header("x-auth-token");
+ // const {products, total_price, user_id,location } = req.body;
+  if (!accessToken){
+  
+    return res.status(400).json({ error: "User not Authenticated!@@@@@" });
+  }
+  try {
+    const result = await orderSchma.validateAsync(req.body)
+     verify(accessToken, "jwtsecretplschange",async (err,decodedtoken)=>{
+      if(err){
+        console.log(err.message);
+        next();
+      }
+      console.log(decodedtoken.id)
+    //  let user  = await User.findOne({where:  { id: decodedtoken.id} ,})
+     // res.locals.user = user;
+     const p = await Order.create({
+      user_id: decodedtoken.id,
+      location: result.location,
+      total_price: result.total_price,
+      products : result.products
+
+     });
+     res.status(200).json(p);
+
+    });
+  } catch (err) {
+    if (err.isJoi === true) {
+      const joiErr = err.details[0].message;
+      console.log(joiErr)
+      return res.status(422).json({
+        joiErr
+      })
+     
+    }
+     res.status(400).json({ error: err });
+     //console.log(err)
+  }
+
 
 });
-// mobiles.forEach(mobile => {
-//   for (let key in mobile) {
-//       console.log(`${key}: ${mobile[key]}`);
-//   }
-// });
+
 
 router.get('/', async (req,res) =>{
     Order.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['id']
-        },
-      ]
       })
     .then(data => {
-      //  for (let i = 0; i < data.length; i++) { 
-      //   console.log(data[i].user_id);
-        
-      // }
       res.send(data);
       })
       .catch(err => {
@@ -65,19 +87,33 @@ router.get('/', async (req,res) =>{
 });
 
 
-router.get('/:id',async (req, res) => { // Finds a single Order by its ID and includes associated  User data
-  try {
-    const d = await Order.findOne({
-      where: {
-        id: req.params.id
-      },
-      include: [
-        {
-          model: User,
-          attributes: ['id']
-        },
 
-      ]
+router.get('/userOrders',async (req, res) => { // Finds a ALL Orders for one User by its ID and 
+
+  const accessToken = req.header("x-auth-token");
+  const {products, total_price, user_id,location } = req.body;
+  if (!accessToken){
+  
+    return res.status(400).json({ error: "User not Authenticated!@@@@@" });
+
+}
+     verify(accessToken, "jwtsecretplschange",async (err,decodedtoken)=>{
+      if(err){
+        console.log(err.message);
+        next();
+      }
+  try {
+    const d = await Order.findAll({
+      where: {
+        user_id: decodedtoken.id
+      },
+      // include: [
+      //   {
+      //     model: User,
+      //     attributes: ['id']
+      //   },
+
+      // ]
     })
     if (!d) {
       res.status(404).json({message: "Couldn't find that Order ID!"});
@@ -86,11 +122,36 @@ router.get('/:id',async (req, res) => { // Finds a single Order by its ID and in
     }
   } catch (error) {
     res.status(500).json(error);
+    console.log(error)
+  }
+})
+});
+
+router.get('/:id', async (req, res) => { // Finds a single Order by its ID and includes associated User and tag data
+  try {
+    const d = await Order.findOne({
+      where: {
+        id: req.params.id
+      },
+      // include: [
+      //   {
+      //     model: User,
+      //     attributes: ['id']
+      //   },
+
+      // ]
+    })
+    if (!d) {
+      res.status(404).json({message: "Couldn't find that product ID!"});
+    } else {
+      res.status(200).json(d);
+    }
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
-
-router.put('/:id', adminChecker,(req, res) => { // Updates Order data
+router.patch('/:id',(req, res) => { // Updates Order data
   Order.update(req.body, {
     where: {
       id: req.params.id,
@@ -115,7 +176,7 @@ router.delete('/:id', adminChecker,async (req, res) => { // delete one Order by 
     if (!d) {
       res.status(404).json({message: 'Could not find a Order with that ID!'});
     } else {
-      res.status(200).json(d);
+      res.status(200).json("Done Order Deleted !!");
     }
   } catch (error) {
     res.status(500).json(error);

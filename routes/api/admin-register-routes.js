@@ -4,13 +4,14 @@ const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { createTokens, validateToken } = require("../../JWT");
-
+const { registerAdminSchma } = require("../helper/authSchema")
 
 router.post('/', async (req, res) => { // Creates a new User
     try{
       
-    const { phone, fullname,password ,isAdmin} = req.body;
-    const emailExists = await User.findOne({ where: { phone: phone } });
+    //const { phone, fullname,password ,isAdmin} = req.body;
+    const result = await registerAdminSchma.validateAsync(req.body)
+    const emailExists = await User.findOne({ where: { phone: result.phone } });
     if(!req.body){
       res.status(404).json("Phone and fyllname and password requierd !!")
     }
@@ -18,10 +19,10 @@ router.post('/', async (req, res) => { // Creates a new User
       res.status(404).json("Phone already registered")
     }else{
     
-    bcrypt.hash(password, 10).then((hash) => {
+    bcrypt.hash(result.password, 10).then((hash) => {
      User.create({
-      fullname: fullname,
-      phone: phone,
+      fullname: result.fullname,
+      phone: result.phone,
       password: hash,
       is_admin: 1
     })
@@ -46,6 +47,15 @@ router.post('/', async (req, res) => { // Creates a new User
       });
     }
   } catch (err) {
+    
+    if (err.isJoi === true) {
+      const joiErr = err.details[0].message;
+      console.log(joiErr)
+      return res.status(422).json({
+        joiErr
+      })
+     
+    }
     return res.status(400).json({ error: err });
   }
   });

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { Product, Category, } = require('../../models');
 const adminChecker = require("../controllers/adminController")
+const { productSchma } = require("../helper/authSchema")
 // The `/api/products` endpoint
 
 router.get('/', async (req, res) => { // Finds all products and includes associated category and tag data
@@ -46,14 +47,23 @@ router.get('/:id', async (req, res) => { // Finds a single product by its ID and
 router.post('/',adminChecker, async(req, res) => {
   
   try {
-    const p = await Product.create(req.body);
+    const result = await productSchma.validateAsync(req.body)
+    const p = await Product.create(result);
     res.status(200).json(p);
-  } catch (error) {
-    res.status(500).json(error);
+  } catch (err) {
+    if (err.isJoi === true) {
+      const joiErr = err.details[0].message;
+      console.log(joiErr)
+      return res.status(422).json({
+        joiErr
+      })
+     
+    }
+    res.status(500).json(err);
   }
 });
 
-router.put('/:id', (req, res) => { // Updates product data
+router.patch('/:id',adminChecker, (req, res) => { // Updates product data
   Product.update(req.body, {
     where: {
       id: req.params.id,
@@ -78,7 +88,7 @@ router.delete('/:id', adminChecker,async (req, res) => { // delete one product b
     if (!d) {
       res.status(404).json({message: 'Could not find a product with that ID!'});
     } else {
-      res.status(200).json(d);
+      res.status(200).json("Done product deleted");
     }
   } catch (error) {
     res.status(500).json(error);

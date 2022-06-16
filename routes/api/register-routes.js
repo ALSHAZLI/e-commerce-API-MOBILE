@@ -3,6 +3,7 @@ const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { createTokens, validateToken } = require("../../JWT");
+const { registerSchma } = require("../helper/authSchema")
 // The `/api/register` endpoint
 
 router.get('/', async (req, res) => { // Finds all register Users
@@ -16,22 +17,30 @@ router.get('/', async (req, res) => { // Finds all register Users
   }
 });
 
-router.post('/', async (req, res) => { // Creates a new User
+router.post('/', async (req, res,next) => { // Creates a new User
   try{
     
-  const { phone, fullname,password } = req.body;
-  const emailExists = await User.findOne({ where: { phone: phone } });
+  //const { phone, fullname,password } = req.body;
+  const result = await registerSchma.validateAsync(req.body)
+  // const er =  authSchma.validate({});
+  // console.log(er)
+  const phoneExists = await User.findOne({ where: { phone: result.phone } });
+  const fullnameExists = await User.findOne({ where: { fullname: result.fullname } });
+
   if(!req.body){
     res.status(404).json("Phone and fyllname and password requierd !!")
   }
-  if (emailExists ) {
+  if (phoneExists ) {
     res.status(404).json("Phone already registered")
+  }
+  if (fullnameExists ) {
+    res.status(404).json("fullnameExists already registered")
   }else{
   
-  bcrypt.hash(password, 10).then((hash) => {
+  bcrypt.hash(result.password, 10).then((hash) => {
    User.create({
-    fullname: fullname,
-    phone: phone,
+    fullname: result.fullname,
+    phone: result.phone,
     password: hash,
   })
     .then((user) => {
@@ -60,6 +69,7 @@ router.post('/', async (req, res) => { // Creates a new User
         console.log(user);
     })
     .catch((err) => {
+      
       console.log(err);
       if (err) {
         return res.status(404).json({
@@ -72,6 +82,14 @@ router.post('/', async (req, res) => { // Creates a new User
     });
   }
 } catch (err) {
+  if (err.isJoi === true) {
+    const joiErr = err.details[0].message;
+    console.log(joiErr)
+    return res.status(422).json({
+      joiErr
+    })
+   
+  }
   return res.status(400).json({ error: err });
 }
 });

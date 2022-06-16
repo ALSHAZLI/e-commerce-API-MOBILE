@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
-const  { createAdminTokens, validateAdminToken } = require("../../midellwaer/admin");
+const { createTokens, validateToken } = require("../../JWT");
 //   const user = await User.findOne({ where: { phone: phone } });   where: { is_admin: 1, phone: phone  } 
 router.post('/', async (req, res) => { 
 
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
           console.log("Password is not valid");
           return res.status(401).json({ message: "Authentication failed Password is not valid" });
         }
-         const accessToken = createAdminTokens(user);
+         const accessToken = createTokens(user);
     
         //   res.cookie("access-token", accessToken, {
         //     maxAge: 60 * 60 * 24 * 30 * 1000,

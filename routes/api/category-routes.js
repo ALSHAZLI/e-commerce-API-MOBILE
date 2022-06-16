@@ -5,6 +5,8 @@ const { sign, verify } = require("jsonwebtoken");
 const User = require("../../models/User");
 const adminChecker = require("../controllers/adminController")
 const  { createAdminTokens, validateAdminToken } = require("../../midellwaer/admin");
+const { categorySchma } = require("../helper/authSchema")
+
 // The `/api/categories` endpoint
 
 router.get('/',async (req, res) => { // Finds all categories and related associations
@@ -57,10 +59,19 @@ router.post('/',adminChecker, async (req, res) => { // Creates a new category
 
  
       try {
-        const d = await Category.create(req.body);
+        const result = await categorySchma.validateAsync(req.body)
+        const d = await Category.create(result);
         res.status(200).json(d);
-      } catch (error) {
-        res.status(500).json(error);
+      } catch (err) {
+        if (err.isJoi === true) {
+          const joiErr = err.details[0].message;
+          console.log(joiErr)
+          return res.status(422).json({
+            joiErr
+          })
+         
+        }
+        res.status(500).json(err);
       }
    // next()
    
