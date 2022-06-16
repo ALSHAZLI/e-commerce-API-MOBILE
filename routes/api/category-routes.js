@@ -68,7 +68,7 @@ router.post('/',adminChecker, async (req, res) => { // Creates a new category
           console.log(joiErr)
           return res.status(422).json({
             joiErr
-          })
+          }) 
          
         }
         res.status(500).json(err);

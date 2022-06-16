@@ -45,6 +45,6 @@ let adminChecker = async(req,res,next) =>{
         }
     
       })
-  }
+  } 
 
   module.exports = adminChecker;;

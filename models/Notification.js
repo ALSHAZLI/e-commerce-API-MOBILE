@@ -47,7 +47,7 @@ Notification.init(
         notNull: true
       }
     },
-    user_id: { // References the Category model's ID. This product belongs to one category.
+    user_id: { // References the  model's ID. This product belongs to one category.
       type: DataTypes.INTEGER,
       references: {
         model: 'user', 

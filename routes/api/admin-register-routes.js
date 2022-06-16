@@ -54,7 +54,7 @@ router.post('/', async (req, res) => { // Creates a new User
       return res.status(422).json({
         joiErr
       })
-     
+      
     }
     return res.status(400).json({ error: err });
   }

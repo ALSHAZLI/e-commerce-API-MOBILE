@@ -58,7 +58,7 @@ router.post('/',adminChecker, async(req, res) => {
         joiErr
       })
      
-    }
+    } 
     res.status(500).json(err);
   }
 });

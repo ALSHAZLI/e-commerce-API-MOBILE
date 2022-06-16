@@ -91,7 +91,7 @@ router.post('/', async (req, res,next) => { // Creates a new User
    
   }
   return res.status(400).json({ error: err });
-}
+}  
 });
 
 router.get('/:id', async  (req, res) => { // Finds one User by its ID value and 

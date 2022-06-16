@@ -2,7 +2,7 @@ const router = require('express').Router();
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const { createTokens, validateToken } = require("../../JWT");
-//   const user = await User.findOne({ where: { phone: phone } });   where: { is_admin: 1, phone: phone  } 
+//   const user = await User.findOne({ where: { phone: phone } });    where: { is_admin: 1, phone: phone  } 
 router.post('/', async (req, res) => { 
 
     

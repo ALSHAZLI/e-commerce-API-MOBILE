@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => { // Finds a single Notification by its I
   } catch (error) {
     res.status(500).json(error);
   }
-});
+}); 
 
 router.post('/',adminChecker, async(req, res) => {
   

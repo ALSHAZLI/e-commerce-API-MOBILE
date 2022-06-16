@@ -41,6 +41,6 @@ router.use('/logout', logoutRoutes );
 // router.use('/home',loginController.checkLoggedIn,homeRoutes);
 router.use('/profile',profileRoutes);
 
-
+ 
 
 module.exports = router;

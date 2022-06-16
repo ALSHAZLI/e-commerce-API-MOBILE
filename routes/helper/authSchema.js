@@ -10,7 +10,7 @@ const updateProfileSchma = Joi.object({
     fullname: Joi.string().min(3).max(20),
     phone: Joi.string().max(10).min(10),
     password: Joi.string().min(3).max(19),
-  });
+  }); 
 
 const registerAdminSchma = Joi.object({
   fullname: Joi.string().min(3).max(20).required(),
