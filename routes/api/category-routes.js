@@ -24,7 +24,7 @@ router.get('/',async (req, res) => { // Finds all categories and related associa
   }
 });
 
-router.get('/shirts', async (req, res) => { // Finds ONE category and related associations
+router.get('/shirts', async (req, res) => {   // Finds O NE category and related  associations
   //  http://localhost:3001/api/categories/shirts 
   try {
     const d = await Category.findOne({ where: { category_name: "shirts"} ,
@@ -55,52 +55,136 @@ router.get('/:id', async  (req, res) => { // Finds one category by its ID value 
 });
 
 //validateAdminToken
-router.post('/',adminChecker, async (req, res) => { // Creates a new category
+router.post('/', async(req, res) => {
 
- 
-      try {
-        const result = await categorySchma.validateAsync(req.body)
-        const d = await Category.create(result);
-        res.status(200).json(d);
-      } catch (err) {
-        if (err.isJoi === true) {
-          const joiErr = err.details[0].message;
-          console.log(joiErr)
-          return res.status(422).json({
-            joiErr
-          }) 
-         
-        }
-        res.status(500).json(err);
-      }
-   // next()
-   
-
+  let info = {
+    image: `Images\\` + req.file.filename,
+    category_name: req.body.category_name,
+    
+}
   
-});
-//validateAdminToken
-router.put('/:id',adminChecker, async (req, res) => { // Updates a category by its `id` value
-
-  
-
   try {
-    const d = await Category.update(req.body, {
-      where: {
-        id: req.params.id
-      }
-    })
-    if (!d) {
-      res.status(404).json({message: 'Could not find a category with that ID!'});
-    } else {
-      console.log(d)
-      res.status(201).json(d);
-    }
-  } catch (error) {
-    res.status(500).json(error);
+    
+  //  const result = await productSchma.validateAsync( req.body)
+    const p = await Category.create(info);
+    res.status(200).json(p);
+  } catch (err) {
+    // if (err.isJoi === true) {
+    //   const joiErr = err.details[0].message;
+    //   console.log(joiErr)
+    //   return res.status(422).json({
+    //     joiErr
+    //   })
+     
+    // } 
+    res.status(500).json(err);
+    console.log(err)
   }
 });
 //validateAdminToken
-router.delete('/:id',adminChecker, async (req, res) => { // Deletes a category by its `id` value
+
+
+router.patch('/:id',(req, res) => { // Updates Order data
+
+  try {
+    Category.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    })
+      .then((category) => {
+        res.status(200).json(category);
+      
+      })  
+      .catch((err) => {
+        res.status(400).json(err);
+        console.log(err)
+      });
+  } catch (error) {
+    console.log(error)
+  }
+
+});
+
+router.patch('/img/:id',(req, res) => { // Updates Order data
+  let info = {
+    image: `Images\\` + req.file.filename,
+}
+  try {
+    Category.update(info, {
+      where: {
+        id: req.params.id,
+      }, 
+    })
+      .then((product) => {
+        res.status(200).json(product);
+      
+      })  
+      .catch((err) => {
+        res.status(400).json(err);
+        console.log(err)
+      });
+  } catch (error) {
+    console.log(error)
+  }
+
+});
+
+
+// router.patch('/:id', async (req, res) => { // Updates a category by its `id` value
+
+// //   let info = {
+// //     image: `Images\\` + req.file.filename,
+// //     category_name: req.body.category_name,
+// // }
+// // let inf = {
+// // category_name: req.body.category_name
+// // }
+// const {   image,
+// category_name} = req.body
+//   try {
+    
+//     const p = await Category.update({
+//       image: `Images\\` + req.file.filename ,
+//       category_name: req.body.category_name
+//        } ,{
+//       where: {
+//         id: req.params.id
+//       } 
+//     })
+  
+
+//       res.status(200).json(p);
+//     //}
+   
+//     } catch (err) {
+//       const result = await categorySchma.validateAsync(req.body);
+//       if(err){
+//       const p = await Category.update({
+       
+//         category_name: result.category_name
+//          } ,{
+//         where: {
+//           id: req.params.id 
+//         } 
+//       })
+//       res.status(200).json(p);
+   
+//     }
+//   }
+//   if (err.isJoi === true) {
+//     const joiErr = err.details[0].message;
+//     console.log(joiErr)
+//     return res.status(422).json({
+//       joiErr
+//     })
+   
+//   }
+//   res.status(500).json(p);
+//   console.log(err)
+// });
+//validateAdminToken
+router.delete('/:id', async (req, res) => { // Deletes a category by its `id` value
   try {
     const d = await Category.destroy({
       where: {
@@ -114,6 +198,7 @@ router.delete('/:id',adminChecker, async (req, res) => { // Deletes a category b
     }
   } catch (error) {
     res.status(500).json(error);
+    console.log(error)
   }
 });
 

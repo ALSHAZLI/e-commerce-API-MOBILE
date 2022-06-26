@@ -25,11 +25,11 @@ const categorySchma = Joi.object({
 
 const productSchma = Joi.object().keys({
   //quantity description category_id
-  name: Joi.string().min(3).max(30).required(),
-  image: Joi.string().min(3).max(1820).required(),
-  description: Joi.string().min(3).max(1120).required(),
-  price: Joi.number().required(),
-  category_id: Joi.number().required(),
+  name: Joi.string().max(30).required(),
+  // image: Joi.string().max(1820),
+  // description: Joi.string().max(1120),
+  // price: Joi.number(),
+  // category_id: Joi.number(),
   
 });
 

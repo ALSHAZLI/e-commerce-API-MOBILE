@@ -4,7 +4,7 @@ var db = require('../config/connection');
 
     sequelize = db.sequelize,
     Sequelize = db.Sequelize;
-
+// htp:hmgnhgnb /../../.././.
 class User extends Model {}
 
 User.init(
@@ -43,11 +43,17 @@ User.init(
     is_admin: {
       type: DataTypes.INTEGER,
       defaultValue: 0
-    }
+    },createdAt:{
+      type: DataTypes.DATE,
+      defaultValue: null
+  },updatedAt:{
+      type: DataTypes.DATE,
+      defaultValue: null
+  }
   },
   {
     sequelize,
-    timestamps: false,
+    timestamps: true,
     freezeTableName: true,
     underscored: true,
     modelName: 'user',

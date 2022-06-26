@@ -4,6 +4,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { createTokens, validateToken } = require("../../JWT");
 const { registerSchma } = require("../helper/authSchema")
+var db = require('../../config/connection'); 
+
+    sequelize = db.sequelize,
+    Sequelize = db.Sequelize;
 // The `/api/register` endpoint
 
 router.get('/', async (req, res) => { // Finds all register Users
@@ -14,8 +18,48 @@ router.get('/', async (req, res) => { // Finds all register Users
     res.status(200).json(d);
   } catch (error) {
     res.status(500).json(error);
+    console.log(error)
   }
 });
+
+router.get('/date', async (req, res) => {
+      try {
+         sequelize.query(
+       // 'SELECT date_format(created_at,"%M") month,group_concat(id ORDER BY id)  ids FROM ecommerce_db.user GROUP BY month;'
+        'SELECT date(created_at) month,group_concat(id ORDER BY id)  ids FROM ecommerce_db.user GROUP BY month;'
+          
+ // 'select id , min(created_at) as min_date from ecommerce_db.user group by id'
+           )
+         .then((dt) => {
+          //  const allData = data.lingth
+            
+            const data = dt[0]
+            const dataAll = data[0]
+           // console.log(dataAll.month.charAt(6))
+           let sum = dataAll.month.substring(5, 7)
+            console.log(03 - 0)
+            
+            //const data = dataAll[0] .substring(1, 4)
+          //  const the = dataAll[1].ids
+        //  const sucsess = dataA.min_date
+          const suc = dataAll.ids.split(',').length
+         // const newSuc = suc.length
+          console.log(suc)
+        //  console.log(newSuc)
+
+          //  var t =  the.split(',').length  charAt
+          //   console.log(t)
+          
+          return res.status(201).json(data);
+      }).catch((err)=>{
+        console.log(err)
+      })
+       
+      } catch (err) {
+          console.log(err);
+      }
+  });
+
 
 router.post('/', async (req, res,next) => { // Creates a new User
   try{

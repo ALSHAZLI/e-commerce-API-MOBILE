@@ -54,7 +54,14 @@ Order.init(
           isDecimal: true, 
           notNull: true
         }
-    },
+    }
+    ,createdAt:{
+      type: DataTypes.DATE,
+      defaultValue: null
+  },updatedAt:{
+      type: DataTypes.DATE,
+      defaultValue: null
+  },
     location:{
       type: DataTypes.STRING,
         allowNull: false,
@@ -68,11 +75,11 @@ Order.init(
   },
   {
     sequelize,
-    timestamps: false,
+    timestamps: true,
     freezeTableName: true,
     underscored: true,
     modelName: "order",
   }
 );
 
-module.exports = Order;
+module.exports = Order; 
