@@ -6,7 +6,7 @@ const multer = require('multer')
 const { createTokens, validateToken } = require("../../JWT");
 const adminChecker = require("../controllers/adminController")
 const path = require('path')
-// The `/api/products` endpoint
+// The `/api/products` endpoin t
 
 router.get('/',validateToken, async (req, res) => { // Finds all products and includes associated category and tag data
   try {
