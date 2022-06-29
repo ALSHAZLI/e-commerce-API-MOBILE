@@ -13,7 +13,7 @@ router.get('/',validateToken, async (req, res) => { // Finds all products and in
     const d = await Product.findAll({
       include: [
         {
-          model: Category,
+          model: Category, 
           attributes: ['category_name']
         },
       ]
