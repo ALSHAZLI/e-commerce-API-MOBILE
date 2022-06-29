@@ -1,12 +1,14 @@
 const router = require('express').Router();
 const { Product, Category, } = require('../../models');
-const adminChecker = require("../controllers/adminController")
+
 const { productSchma } = require("../helper/authSchema")
 const multer = require('multer')
+const { createTokens, validateToken } = require("../../JWT");
+const adminChecker = require("../controllers/adminController")
 const path = require('path')
 // The `/api/products` endpoint
 
-router.get('/', async (req, res) => { // Finds all products and includes associated category and tag data
+router.get('/',validateToken, async (req, res) => { // Finds all products and includes associated category and tag data
   try {
     const d = await Product.findAll({
       include: [
@@ -23,7 +25,7 @@ router.get('/', async (req, res) => { // Finds all products and includes associa
   }
 });
 
-router.get('/:id', async (req, res) => { // Finds a single product by its ID and includes associated category and tag data
+router.get('/:id',validateToken, async (req, res) => { // Finds a single product by its ID and includes associated category and tag data
   try {
     const d = await Product.findOne({
       where: {
@@ -48,7 +50,7 @@ router.get('/:id', async (req, res) => { // Finds a single product by its ID and
   }
 });
 
-router.post('/', async(req, res) => {
+router.post('/', validateToken,async(req, res) => {
   let info = {
     image: `Images\\` + req.file.filename,
     name: req.body.name,
@@ -190,7 +192,7 @@ router.patch('/img/:id',(req, res) => { // Updates Order data
 
 // });
 
-router.delete('/:id',async (req, res) => { // delete one product by its `id` value
+router.delete('/:id',validateToken,async (req, res) => { // delete one product by its `id` value
   try {
     const d = await Product.destroy({
       where: {

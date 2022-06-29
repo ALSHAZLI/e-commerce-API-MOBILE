@@ -13,7 +13,7 @@ router.post('/', async (req, res) => { // Creates a new User
     const result = await registerAdminSchma.validateAsync(req.body)
     const emailExists = await User.findOne({ where: { phone: result.phone } });
     if(!req.body){
-      res.status(404).json("Phone and fyllname and password requierd !!")
+      res.status(404).json("Phone and phone and password requierd !!")
     }
     if (emailExists ) {
       res.status(404).json("Phone already registered")

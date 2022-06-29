@@ -30,7 +30,7 @@ const  { createAdminTokens, validateAdminToken } = require("../../midellwaer/adm
 
 
 router.use('/categories',upload,categoryRoutes);
-router.use('/notification', validateToken,notificationRoutes);
+router.use('/notification',notificationRoutes);
 router.use('/products',upload, productRoutes);
 router.use('/orders', orderRoutes);
 router.use('/register',registerRoutes);

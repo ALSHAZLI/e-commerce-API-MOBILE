@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
     
         if (!validPassword) {
           console.log("Password is not valid");
-          return res.status(401).json({ message: "Authentication failed Password is not valid" });
+          return res.status(404).json({ message: "Authentication failed Password is not valid" });
         }
          const accessToken = createTokens(user);
     

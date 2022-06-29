@@ -9,7 +9,7 @@ const { categorySchma } = require("../helper/authSchema")
 
 // The `/api/categories` endpoint
 
-router.get('/',async (req, res) => { // Finds all categories and related associations
+router.get('/',validateToken,async (req, res) => { // Finds all categories and related associations
   //  http://localhost:3001/api/categories 
   try {
     const d = await Category.findAll({
@@ -39,7 +39,7 @@ router.get('/shirts', async (req, res) => {   // Finds O NE category and related
   }
 });
 
-router.get('/:id', async  (req, res) => { // Finds one category by its ID value and related associations
+router.get('/:id',validateToken, async  (req, res) => { // Finds one category by its ID value and related associations
   try {
     const d = await Category.findByPk(req.params.id, {
       include: [{model: Product}]
@@ -55,7 +55,7 @@ router.get('/:id', async  (req, res) => { // Finds one category by its ID value 
 });
 
 //validateAdminToken
-router.post('/', async(req, res) => {
+router.post('/',validateToken, async(req, res) => {
 
   let info = {
     image: `Images\\` + req.file.filename,
@@ -184,7 +184,7 @@ router.patch('/img/:id',(req, res) => { // Updates Order data
 //   console.log(err)
 // });
 //validateAdminToken
-router.delete('/:id', async (req, res) => { // Deletes a category by its `id` value
+router.delete('/:id',validateToken, async (req, res) => { // Deletes a category by its `id` value
   try {
     const d = await Category.destroy({
       where: {

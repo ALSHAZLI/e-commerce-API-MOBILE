@@ -14,6 +14,7 @@ var db = require('./config/connection');
 
 const app = express();
 var corsOptions = {
+  // this is React URL and PORT
   origin: 'http://localhost:3000',
   optionsSuccessStatus: 200 // For legacy browser support
  }

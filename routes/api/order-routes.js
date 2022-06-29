@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { Order, User } = require('../../models');
 const adminChecker = require("../controllers/adminController")
-
+const { createTokens, validateToken } = require("../../JWT");
 const { sign, verify } = require("jsonwebtoken");
 const { orderSchma } = require("../helper/authSchema")
 
@@ -72,7 +72,7 @@ router.post('/',async (req, res) => {
 });
 
 
-router.get('/', async (req,res) =>{
+router.get('/',validateToken, async (req,res) =>{
     Order.findAll({
       })
     .then(data => {
@@ -127,7 +127,7 @@ router.get('/userOrders',async (req, res) => { // Finds a ALL Orders for one Use
 })
 });
 
-router.get('/:id', async (req, res) => { // Finds a single Order by its ID and includes associated User and tag data
+router.get('/:id',validateToken, async (req, res) => { // Finds a single Order by its ID and includes associated User and tag data
   try {
     const d = await Order.findOne({
       where: {
@@ -166,7 +166,7 @@ router.patch('/:id',(req, res) => { // Updates Order data
     });
 });
 
-router.delete('/:id', adminChecker,async (req, res) => { // delete one Order by its `id` value
+router.delete('/:id', validateToken,async (req, res) => { // delete one Order by its `id` value
   try {
     const d = await Order.destroy({
       where: {
