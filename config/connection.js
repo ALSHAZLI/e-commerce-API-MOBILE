@@ -23,6 +23,7 @@ db.Sequelize = Sequelize;
 module.exports = db;
 
 
+// testing 
 
 // require('dotenv').config();
 
